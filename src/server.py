@@ -107,8 +107,7 @@ def serialize_data(data):
     elif isinstance(data, list):
         return [serialize_data(v) for v in data]
     else:
-        print(data, type(data))
-        # abort(Response(f"Cannot serialize data of type {type(data)}", 400))
+        raise ValueError(f"Cannot serialize data of type {type(data)}")
 
 
 def clean_code(source):

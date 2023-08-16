@@ -15,4 +15,6 @@ gunicorn norse_server.server.app
 flask --app src/server.py --debug run -h 0.0.0.0
 ```
 
-## Authors
+## Acknowledgements
+
+This project has received funding from the European Union’s Horizon 2020 Framework Programme for Research and Innovation under Specific Grant Agreement No. 785907 (Human Brain Project SGA2) and No. 945539 (Human Brain Project SGA3). 
