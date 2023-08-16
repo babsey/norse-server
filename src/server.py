@@ -111,7 +111,7 @@ def serialize_data(data):
 
 
 def clean_code(source):
-    codes = re.split(r"\n+ |;", source)
+    codes = re.split(r"\n+|;", source)
     codes = [code.strip() for code in codes]
     code_cleaned = filter(lambda code: not (code.startswith("import ") or code.startswith("from ")), codes)  # noqa
     return "\n".join(code_cleaned)
