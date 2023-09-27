@@ -1,0 +1,9 @@
+#!/bin/bash
+
+export NORSE_SERVER_HOST="${NORSE_SERVER_HOST:-0.0.0.0}"
+export NORSE_SERVER_MODULES="${NORSE_SERVER_MODULES:-import norse; import torch; import numpy as np}"
+export NORSE_SERVER_PORT="${NORSE_SERVER_PORT:-11428}"
+export NORSE_SERVER_DISABLE_RESTRICTION="${NORSE_SERVER_DISABLE_RESTRICTION:-1}"
+export NORSE_SERVER_STDOUT="${NORSE_SERVER_STDOUT:-1}"
+
+exec norse-server start
