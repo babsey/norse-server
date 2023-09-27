@@ -83,6 +83,16 @@ stop() {
   fi
 }
 
+# Returns the version of Norse server.
+version() {
+   python3 -c "from norse_server import __version__; print(__version__)"
+}
+
+# Returns the version of Norse.
+version-norse() {
+   python3 -c "from norse import __version__; print(__version__)"
+}
+
 CMD=$1; shift
 while getopts "dh:op:" opt; do
     case $opt in
@@ -100,5 +110,7 @@ case "$CMD" in
   start)   start ;;
   status)  status ;;
   stop)    stop ;;
+  version) version ;;
+  version-norse) version-norse ;;
   *) usage ;;
 esac
