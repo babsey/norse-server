@@ -2,6 +2,7 @@
 name = "norse-server"
 authors = [
     {name = "Jens E. Pedersen", email = "jeped@kth.se"},
+    {name = "Sebastian Spreizer", email = "spreizer@web.de"},
 ]
 description = "Server for executing arbitrary PyTorch and Norse code"
 readme = "README.md"
@@ -25,9 +26,7 @@ dynamic = ["version"]
 
 [tool.setuptools]
 package-dir = {"norse_server" = "src"}
-
-[project.scripts]
-norse-server = "norse_server.server:app"
+script-files = ["scripts/norse-server"]
 
 [tool.setuptools.dynamic]
 version = {attr = "src.__version__"}
