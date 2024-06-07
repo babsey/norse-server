@@ -19,7 +19,7 @@ dependencies = [
     "flask-cors",
     "norse",
     "werkzeug",
-    "RestrictedPython",
+    "restrictedpython",
     "gunicorn"
 ]
 dynamic = ["version"]
