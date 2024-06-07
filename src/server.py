@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""\
+"""
 This script runs server instance for Norse
 """
 
@@ -43,6 +43,7 @@ if RESTRICTION_DISABLED:
 app = Flask(__name__)
 CORS(app)
 
+
 @app.route("/", methods=["GET"])
 def index():
     return jsonify(
@@ -51,6 +52,7 @@ def index():
             "torch": torch.__version__,
         }
     )
+
 
 @app.route("/exec", methods=["GET", "POST"])
 @cross_origin()
@@ -66,8 +68,9 @@ def route_exec():
 # Helpers for the server
 # ----------------------
 
+
 class Capturing(list):
-    """Monitor stdout contents i.e. print."""
+    """Monitor stdout contents."""
 
     def __enter__(self):
         self._stdout = sys.stdout
@@ -87,13 +90,20 @@ def get_arguments(request):
         json = request.get_json()
         if isinstance(json, dict):
             kwargs = json
-        #else: TODO: Error
+        # else: TODO: Error
 
     elif len(request.form) > 0:
         kwargs = request.form.to_dict()
     elif len(request.args) > 0:
         kwargs = request.args.to_dict()
     return kwargs
+
+
+def clean_code(source):
+    codes = source.split("\n")
+    code_cleaned = filter(lambda code: not (code.startswith("import ") or code.startswith("from ")), codes)  # noqa
+    return "\n".join(code_cleaned)
+
 
 def do_exec(kwargs):
     try:
@@ -136,21 +146,6 @@ def do_exec(kwargs):
             print(line, flush=True)
         abort(Response(str(e), 400))
 
-def clean_code(source):
-    codes = source.split("\n")
-    code_cleaned = filter(lambda code: not (code.startswith("import ") or code.startswith("from ")), codes)  # noqa
-    return "\n".join(code_cleaned)
-
-def get_globals():
-    """Get globals for exec function."""
-    copied_globals = globals().copy()
-
-    # Add modules to copied globals
-    modlist = [(module, importlib.import_module(module)) for module in MODULES]
-    modules = dict(modlist)
-    copied_globals.update(modules)
-
-    return copied_globals
 
 def get_modules_from_env():
     """Get modules from environment variable NEST_SERVER_MODULES.
@@ -176,6 +171,7 @@ def get_modules_from_env():
             for alias in node.names:
                 modules[alias.asname or alias.name] = importlib.import_module(f"{node.module}.{alias.name}")
     return modules
+
 
 def get_restricted_globals():
     """Get restricted globals for exec function."""
@@ -209,12 +205,8 @@ def get_restricted_globals():
         _write_=RestrictedPython.Guards.full_write_guard,
     )
 
-    # Add modules to restricted globals
-    modlist = [(module, importlib.import_module(module)) for module in MODULES]
-    modules = dict(modlist)
-    restricted_globals.update(modules)
-
     return restricted_globals
+
 
 def serialize_data(data):
     if isinstance(data, torch.Tensor):
