@@ -83,22 +83,6 @@ class Capturing(list):
         sys.stdout = self._stdout
 
 
-def get_arguments(request):
-    """Get arguments from the request."""
-    kwargs = {}
-    if request.is_json:
-        json = request.get_json()
-        if isinstance(json, dict):
-            kwargs = json
-        # else: TODO: Error
-
-    elif len(request.form) > 0:
-        kwargs = request.form.to_dict()
-    elif len(request.args) > 0:
-        kwargs = request.args.to_dict()
-    return kwargs
-
-
 def clean_code(source):
     codes = source.split("\n")
     code_cleaned = filter(lambda code: not (code.startswith("import ") or code.startswith("from ")), codes)  # noqa
@@ -145,6 +129,22 @@ def do_exec(kwargs):
         for line in traceback.format_exception(*sys.exc_info()):
             print(line, flush=True)
         abort(Response(str(e), 400))
+
+
+def get_arguments(request):
+    """Get arguments from the request."""
+    kwargs = {}
+    if request.is_json:
+        json = request.get_json()
+        if isinstance(json, dict):
+            kwargs = json
+        # else: TODO: Error
+
+    elif len(request.form) > 0:
+        kwargs = request.form.to_dict()
+    elif len(request.args) > 0:
+        kwargs = request.args.to_dict()
+    return kwargs
 
 
 def get_modules_from_env():
