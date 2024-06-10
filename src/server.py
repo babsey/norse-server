@@ -89,6 +89,12 @@ def clean_code(source):
     return "\n".join(code_cleaned)
 
 
+def clean_code(source):
+    codes = source.split("\n")
+    code_cleaned = filter(lambda code: not (code.startswith("import ") or code.startswith("from ")), codes)  # noqa
+    return "\n".join(code_cleaned)
+
+
 def do_exec(kwargs):
     try:
         source_code = kwargs.get("source", "")
