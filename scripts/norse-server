@@ -50,9 +50,9 @@ set-gunicorn_opts() {
 start() {
   # Start server instance.
   if pid > /dev/null;  then
-    echo "NORSE Server is already running at http://${HOST}:${PORT}."
+    echo "Norse Server is already running at http://${HOST}:${PORT}."
   else
-    echo "NORSE Server is now running at http://${HOST}:${PORT}."
+    echo "Norse Server is now running at http://${HOST}:${PORT}."
     if [ "${DAEMON}" -eq 0 ]; then
       echo "Use CTRL + C to stop this service."
       if [ "${STDOUT}" -eq 1 ]; then
@@ -61,7 +61,7 @@ start() {
     fi
 
     set-gunicorn_opts
-    exec gunicorn norse_server.server:app ${GUNICORN_OPTS}
+    exec gunicorn norse_server:app ${GUNICORN_OPTS}
   fi
 }
 
@@ -76,9 +76,9 @@ stop() {
   # Stop server instance.
   if pid > /dev/null; then
     kill "$(pid 2>&1 | head -n 1)"
-    echo "NORSE Server running at http://${HOST}:${PORT} has stopped."
+    echo "Norse Server running at http://${HOST}:${PORT} has stopped."
   else
-    echo "NORSE Server is not running at http://${HOST}:${PORT}."
+    echo "Norse Server is not running at http://${HOST}:${PORT}."
     false
   fi
 }
