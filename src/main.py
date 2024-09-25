@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-"""\
-This script runs server instance for Norse
+"""
+This script runs server instance for Norse.
 """
 
 import logging
@@ -13,8 +13,8 @@ from flask_cors import CORS
 import norse
 import torch
 
-from .helpers import get_arguments, do_exec
-from .utils import ErrorHandler
+from .helpers import do_exec
+from .utils import ErrorHandler, get_arguments
 
 
 # This ensures that the logging information shows up in the console running the server,
