@@ -4,8 +4,11 @@
 This script runs server instance for Norse
 """
 
-from flask import Flask, request, jsonify
-from flask_cors import CORS, cross_origin
+import logging
+
+from flask import Flask, jsonify, request
+from flask.logging import default_handler
+from flask_cors import CORS
 
 import norse
 import torch
@@ -14,10 +17,18 @@ from .helpers import get_arguments, do_exec
 from .utils import ErrorHandler
 
 
+# This ensures that the logging information shows up in the console running the server,
+# even when Flask's event loop is running.
+# https://flask.palletsprojects.com/en/2.3.x/logging/
+root = logging.getLogger()
+root.addHandler(default_handler)
+
+
 app = Flask(__name__)
 CORS(app)
 
 
+# https://flask.palletsprojects.com/en/2.3.x/errorhandling/
 @app.errorhandler(ErrorHandler)
 def error_handler(e):
     return jsonify(e.to_dict()), e.status_code
@@ -34,7 +45,6 @@ def index():
 
 
 @app.route("/exec", methods=["GET", "POST"])
-@cross_origin()
 def route_exec():
     """Route to execute script in Python."""
 
