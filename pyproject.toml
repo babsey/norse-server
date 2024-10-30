@@ -1,8 +1,8 @@
 [project]
 name = "norse-server"
 authors = [
-    {name = "Jens E. Pedersen", email = "jeped@kth.se"},
-    {name = "Sebastian Spreizer", email = "spreizer@web.de"},
+  {name = "Sebastian Spreizer", email = "spreizer@web.de"},
+  {name = "Jens E. Pedersen", email = "jeped@kth.se"},
 ]
 description = "Server for executing arbitrary PyTorch and Norse code"
 readme = "README.md"
@@ -10,17 +10,17 @@ requires-python = ">=3.8"
 keywords = ["Python", "PyTorch", "Norse", "Flask"]
 license = {text = "BSD-3-Clause"}
 classifiers = [
-    "Framework :: Flask",
-    "Programming Language :: Python :: 3",
+  "Framework :: Flask",
+  "Programming Language :: Python :: 3",
 ]
 dependencies = [
-    "requests",
-    "flask",
-    "flask-cors",
-    "norse",
-    "werkzeug",
-    "RestrictedPython",
-    "gunicorn"
+  "RestrictedPython",
+  "flask",
+  "flask-cors",
+  "gunicorn",
+  "norse",
+  "requests",
+  "werkzeug",
 ]
 dynamic = ["version"]
 

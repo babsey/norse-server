@@ -12,7 +12,7 @@ pip install git+https://github.com/norse/norse_server
 norse-server start
 
 # Or locally with flask for development
-flask --app src/server.py --debug run -h 0.0.0.0
+flask --app src/main.py --debug run -h 0.0.0.0
 ```
 
 ## Acknowledgements
