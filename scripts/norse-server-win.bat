@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableDelayedExpansion
-REM Server-Einstellungen
+REM Server configurations
 IF NOT DEFINED NORSE_SERVER_HOST (
     set HOST=127.0.0.1
 ) ELSE (
@@ -13,7 +13,7 @@ IF NOT DEFINED NORSE_SERVER_PORT (
     set PORT=%NORSE_SERVER_PORT%
 )
 
-REM Argumente verarbeiten
+REM Compute arguments
 :parse_args
 if "%~1"=="" goto end_parse_args
 if "%~1"=="-h" (
@@ -42,16 +42,16 @@ if "%COMMAND%"=="start" (
 ) else if "%COMMAND%"=="help" (
     goto usage
 ) else (
-    echo Ungültiger Befehl! Verwende: start, help
+    echo Invalid command! Use: start, help
 )
 
-REM Funktion: start
+REM Function: start
 :start
 echo Starting server on %HOST%:%PORT%
 python -m waitress --host=%HOST% --port=%PORT% norse_server:app
 goto :eof
 
-REM Funktion: usage
+REM Function: usage
 :usage
 echo Usage: norse-server-win start^| help [-h ^<HOST^>][-p ^<PORT^>]
 echo.

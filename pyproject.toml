@@ -20,8 +20,8 @@ dependencies = [
   "gunicorn",
   "norse",
   "requests",
-  "werkzeug",
   "waitress",
+  "werkzeug",
 ]
 dynamic = ["version"]
 
