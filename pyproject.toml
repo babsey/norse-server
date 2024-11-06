@@ -21,6 +21,7 @@ dependencies = [
   "norse",
   "requests",
   "werkzeug",
+  "waitress",
 ]
 dynamic = ["version"]
 
