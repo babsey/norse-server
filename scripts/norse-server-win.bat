@@ -48,7 +48,7 @@ if "%COMMAND%"=="start" (
 REM Function: start
 :start
 echo Starting server on %HOST%:%PORT%
-python -m waitress --host=%HOST% --port=%PORT% norse_server:app
+waitress-serve --host=%HOST% --port=%PORT% norse_server:app
 goto :eof
 
 REM Function: usage
