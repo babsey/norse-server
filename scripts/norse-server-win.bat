@@ -26,7 +26,7 @@ if "%~1"=="-h" (
     set "COMMAND=start"
 ) else if "%~1"=="help" (
     set "COMMAND=help"
-) 
+)
 
 shift
 goto parse_args
