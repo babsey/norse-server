@@ -1,0 +1,7 @@
+RestrictedPython
+flask
+flask-cors
+gunicorn
+norse
+requests
+werkzeug
