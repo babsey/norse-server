@@ -38,13 +38,9 @@ pid() {
 set-gunicorn_opts() {
   # Set opts for gunicorn.
   GUNICORN_OPTS="--bind ${HOST}:${PORT}"
-  if [ "${DAEMON}" -eq 1 ]; then
-    GUNICORN_OPTS="${GUNICORN_OPTS} --daemon"
-  fi
-  if [ "${STDOUT}" -eq 0 ]; then
-    GUNICORN_OPTS="${GUNICORN_OPTS} --capture-output"
-  fi
   GUNICORN_OPTS="${GUNICORN_OPTS} --log-file ${LOGFILE}"
+  [[ "${DAEMON}" -eq 1 ]] && GUNICORN_OPTS="${GUNICORN_OPTS} --daemon"
+  [[ "${STDOUT}" -eq 0 ]] && GUNICORN_OPTS="${GUNICORN_OPTS} --capture-output"
 }
 
 start() {
@@ -55,21 +51,21 @@ start() {
     echo "Norse Server is now running at http://${HOST}:${PORT}."
     if [ "${DAEMON}" -eq 0 ]; then
       echo "Use CTRL + C to stop this service."
-      if [ "${STDOUT}" -eq 1 ]; then
-        echo "-----------------------------------------------------"
-      fi
+      [[ "${STDOUT}" -eq 1 ]] && echo "------------------------------------------------------"
     fi
 
     set-gunicorn_opts
+    # shellcheck disable=SC2086
     exec gunicorn norse_server:app ${GUNICORN_OPTS}
   fi
 }
 
 status() {
   # List all processes of NORSE Server.
-  PS_AUX="$(ps aux | grep "[g]unicorn norse_server.app")"
-  printf "USER\t\t\tPID\t\tHTTP-SOCKET\n"
-  echo "${PS_AUX}" | head -n 1 | awk '{ for(i=1;i<=NF;i++) {if ( i == 1 || i == 2 || i == 15 ) printf $i"\t\t"}; printf "\n" }'
+  PS_AUX="$(pgrep -af "gunicorn norse_server.app")"
+  printf "PID\t\tHTTP-SOCKET\t\tLOGFILE\n"
+  echo "${PS_AUX}" | head -n 1 | awk \
+    '{ for(i=1;i<=NF;i++) {if ( i == 1 || i == 6 || i == 8 ) printf $i"\t\t"}; printf "\n" }'
 }
 
 stop() {
@@ -88,7 +84,7 @@ version() {
    python3 -c "from norse_server import __version__; print(__version__)"
 }
 
-# Returns the version of Norse.
+# Returns the version of NORSE.
 version-norse() {
    python3 -c "from norse import __version__; print(__version__)"
 }
@@ -100,6 +96,7 @@ while getopts "dh:op:" opt; do
         h) HOST=$OPTARG ;;
         o) STDOUT=1 ;;
         p) PORT=$OPTARG ;;
+        *) echo "Invalid option"
     esac
 done
 
