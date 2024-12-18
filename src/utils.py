@@ -5,8 +5,8 @@ import ast
 import importlib
 import io
 import os
+import re
 import sys
-import traceback
 
 MODULES = os.environ.get("NORSE_SERVER_MODULES", "import norse; import torch; import numpy as np")
 
@@ -25,29 +25,8 @@ class Capturing(list):
         sys.stdout = self._stdout
 
 
-class ErrorHandler(Exception):
-    status_code = 400
-    lineno = -1
-
-    def __init__(self, message, lineno=None, status_code=None, payload=None):
-        super().__init__()
-        self.message = message
-        if status_code is not None:
-            self.status_code = status_code
-        if lineno is not None:
-            self.lineno = lineno
-        self.payload = payload
-
-    def to_dict(self):
-        rv = dict(self.payload or ())
-        rv["message"] = self.message
-        if self.lineno != -1:
-            rv["lineNumber"] = self.lineno
-        return rv
-
-
 def clean_code(source):
-    codes = source.split("\n")
+    codes = re.split('\n|; ', source)
     codes_cleaned = []  # noqa
     for code in codes:
         if code.startswith("import") or code.startswith("from"):
@@ -57,38 +36,25 @@ def clean_code(source):
     return "\n".join(codes_cleaned)
 
 
-def get_arguments(request):
-    """Get arguments from the request."""
-    kwargs = {}
-    if request.is_json:
-        json = request.get_json()
-        if isinstance(json, dict):
-            kwargs = json
-        # else: TODO: Error
+# def get_arguments(request):
+#     """Get arguments from the request."""
+#     kwargs = {}
+#     if request.is_json:
+#         json = request.get_json()
+#         if isinstance(json, dict):
+#             kwargs = json
+#         # else: TODO: Error
 
-    elif len(request.form) > 0:
-        kwargs = request.form.to_dict()
-    elif len(request.args) > 0:
-        kwargs = request.args.to_dict()
-    return kwargs
+#     elif len(request.form) > 0:
+#         kwargs = request.form.to_dict()
+#     elif len(request.args) > 0:
+#         kwargs = request.args.to_dict()
+#     return kwargs
 
 
 def get_boolean_environ(env_key, default_value="false"):
     env_value = os.environ.get(env_key, default_value)
     return env_value.lower() in ["yes", "true", "t", "1"]
-
-
-def get_lineno(err, tb_idx):
-    lineno = -1
-    if hasattr(err, "lineno") and err.lineno is not None:
-        lineno = err.lineno
-    else:
-        tb = sys.exc_info()[2]
-        # if hasattr(tb, "tb_lineno") and tb.tb_lineno is not None:
-        #     lineno = tb.tb_lineno
-        # else:
-        lineno = traceback.extract_tb(tb)[tb_idx][1]
-    return lineno
 
 
 def get_modules_from_env():
@@ -115,33 +81,3 @@ def get_modules_from_env():
             for alias in node.names:
                 modules[alias.asname or alias.name] = importlib.import_module(f"{node.module}.{alias.name}")
     return modules
-
-
-def get_or_error(func):
-    """Wrapper to exec function."""
-
-    def func_wrapper(*args, **kwargs):
-
-        try:
-            return func(*args, **kwargs)
-
-        except (KeyError, SyntaxError, TypeError, ValueError) as err:
-            error_class = err.__class__.__name__
-            detail = err.args[0]
-            lineno = get_lineno(err, 1)
-
-        except Exception as err:
-            error_class = err.__class__.__name__
-            detail = err.args[0]
-            lineno = get_lineno(err, -1)
-
-        for line in traceback.format_exception(*sys.exc_info()):
-            print(line, flush=True)
-
-        if lineno == -1:
-            message = "%s: %s" % (error_class, detail)
-        else:
-            message = "%s at line %d: %s" % (error_class, lineno, detail)
-        raise ErrorHandler(message, lineno)
-
-    return func_wrapper

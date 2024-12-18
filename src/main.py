@@ -1,53 +1,62 @@
 #!/usr/bin/env python
+# main.py
 
 """
 This script runs server instance for Norse.
 """
 
-import logging
+from fastapi import FastAPI, Request, status
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
-from flask import Flask, jsonify, request
-from flask.logging import default_handler
-from flask_cors import CORS
+import uvicorn
 
 import norse
 import torch
 
+from .exceptions import ErrorHandler
 from .helpers import do_exec
-from .utils import ErrorHandler, get_arguments
 
+app = FastAPI()
 
-# This ensures that the logging information shows up in the console running the server,
-# even when Flask's event loop is running.
-# https://flask.palletsprojects.com/en/2.3.x/logging/
-root = logging.getLogger()
-root.addHandler(default_handler)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-
-app = Flask(__name__)
-CORS(app)
-
-
-# https://flask.palletsprojects.com/en/2.3.x/errorhandling/
-@app.errorhandler(ErrorHandler)
-def error_handler(e):
-    return jsonify(e.to_dict()), e.status_code
-
-
-@app.route("/", methods=["GET"])
-def index():
-    return jsonify(
-        {
-            "norse": norse.__version__,
-            "torch": torch.__version__,
-        }
+# https://fastapi.tiangolo.com/tutorial/handling-errors/?h=erro#use-the-requestvalidationerror-body
+@app.exception_handler(ErrorHandler)
+async def validation_exception_handler(request: Request, exc: ErrorHandler):
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content=jsonable_encoder(exc.to_dict()),
     )
 
+@app.get("/")
+def index():
+    return {
+        "norse": norse.__version__,
+        "torch": torch.__version__,
+    }
 
-@app.route("/exec", methods=["GET", "POST"])
-def route_exec():
+
+
+class Data(BaseModel):
+    response_keys: str | list = "response"
+    source: str = ""
+
+
+@app.post("/exec")
+def route_exec(data: Data):
     """Route to execute script in Python."""
 
-    kwargs = get_arguments(request)
-    response = do_exec(kwargs)
-    return jsonify(response)
+    response = do_exec(data)
+    return response
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="localhost", port=11428, log_config=f"norse-server-log.ini")

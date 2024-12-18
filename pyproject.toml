@@ -17,7 +17,7 @@ dynamic = ["dependencies", "version"]
 
 [tool.setuptools]
 package-dir = {"norse_server" = "src"}
-script-files = ["scripts/norse-server" , "scripts/norse-server-win.bat"]
+script-files = ["scripts/norse-server", "scripts/norse-server-win.bat"]
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}

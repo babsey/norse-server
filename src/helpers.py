@@ -7,20 +7,21 @@ import torch
 import numpy as np
 import RestrictedPython
 
-from .utils import Capturing, clean_code, get_boolean_environ, get_modules_from_env, get_or_error
+from .utils import Capturing, clean_code, get_boolean_environ, get_modules_from_env
+from .exceptions import call_or_error
+from .serialize import serialize_data
 
 
 RESTRICTION_DISABLED = get_boolean_environ("NORSE_SERVER_DISABLE_RESTRICTION")
-EXCEPTION_ERROR_STATUS = 400
 
 if RESTRICTION_DISABLED:
     msg = "Norse Server runs without a RestrictedPython trusted environment."
     print(f"***\n*** WARNING: {msg}\n***")
 
 
-def do_exec(kwargs):
-    source_code = kwargs.get("source", "")
-    source_cleaned = clean_code(source_code)
+def do_exec(request):
+    if len(request.source) == 0: return
+    source_cleaned = clean_code(request.source)
 
     locals_ = dict()
     response = dict()
@@ -28,24 +29,24 @@ def do_exec(kwargs):
         with Capturing() as stdout:
             globals_ = globals().copy()
             globals_.update(get_modules_from_env())
-            get_or_error(exec)(source_cleaned, globals_, locals_)
+            call_or_error(exec)(source_cleaned, globals_, locals_)
         if len(stdout) > 0:
             response["stdout"] = "\n".join(stdout)
     else:
         code = RestrictedPython.compile_restricted(source_cleaned, "<inline>", "exec")  # noqa
         globals_ = get_restricted_globals()
         globals_.update(get_modules_from_env())
-        get_or_error(exec)(code, globals_, locals_)
+        call_or_error(exec)(code, globals_, locals_)
         if "_print" in locals_:
             response["stdout"] = "".join(locals_["_print"].txt)
 
-    if "return" in kwargs:
-        if isinstance(kwargs["return"], list):
+    if request.response_keys:
+        if isinstance(request.response_keys, list):
             data = dict()
-            for variable in kwargs["return"]:
-                data[variable] = locals_.get(variable, None)
+            for key in request.response_keys:
+                data[key] = locals_.get(key, None)
         else:
-            data = locals_.get(kwargs["return"], None)
+            data = locals_.get(request.response_keys, None)
         response["data"] = serialize_data(data)
     return response
 
@@ -84,17 +85,3 @@ def get_restricted_globals():
 
     return restricted_globals
 
-
-@get_or_error
-def serialize_data(data):
-    if isinstance(data, torch.Tensor):
-        return data.detach().tolist()
-    elif isinstance(data, np.ndarray):
-        return data.tolist()
-    elif isinstance(data, dict):
-        return {k: serialize_data(v) for k, v in data.items()}
-    elif isinstance(data, list):
-        return [serialize_data(v) for v in data]
-    else:
-        print(data)
-        raise ValueError(f"Cannot serialize data of type {type(data)}")
