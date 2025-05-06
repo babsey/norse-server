@@ -6,8 +6,9 @@ readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "BSD-3-Clause"}
 authors = [
-  {name = "Sebastian Spreizer", email = "spreizer@web.de"},
-  {name = "Jens E. Pedersen", email = "jeped@kth.se"},
+  {name = "Hilal Khalife"},
+  {name = "Jens E. Pedersen"},
+  {name = "Sebastian Spreizer"},
 ]
 maintainers = [
   {name = "Sebastian Spreizer", email = "spreizer@web.de"},
