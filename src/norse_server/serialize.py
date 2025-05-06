@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # serialize.py
 
-import torch
-import numpy as np
+import torch # noqa
+import numpy as np # noqa
 
 from .exceptions import call_or_error
 

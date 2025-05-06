@@ -1,14 +1,17 @@
 #!/usr/bin/env python
 # utils.py
 
-import ast
-import importlib
-import io
-import os
-import re
-import sys
+import ast # noqa
+import importlib # noqa
+import io # noqa
+import os # noqa
+import re # noqa
+import sys # noqa
 
-MODULES = os.environ.get("NORSE_SERVER_MODULES", "import norse; import torch; import numpy as np")
+MODULES = os.environ.get(
+    "NORSE_SERVER_MODULES",
+    ";".join(["import norse", "import torch", "import numpy as np"]),
+)
 
 
 class Capturing(list):
@@ -26,7 +29,7 @@ class Capturing(list):
 
 
 def clean_code(source):
-    codes = re.split('\n|; ', source)
+    codes = re.split("\n|; ", source)
     codes_cleaned = []  # noqa
     for code in codes:
         if code.startswith("import") or code.startswith("from"):
@@ -72,12 +75,18 @@ def get_modules_from_env():
     try:
         parsed = ast.iter_child_nodes(ast.parse(MODULES))
     except (SyntaxError, ValueError):
-        raise SyntaxError("The Norse server module environment variables contains syntax errors.")
+        raise SyntaxError(
+            "The Norse server module environment variables contains syntax errors."
+        )
     for node in parsed:
         if isinstance(node, ast.Import):
             for alias in node.names:
-                modules[alias.asname or alias.name] = importlib.import_module(alias.name)
+                modules[alias.asname or alias.name] = importlib.import_module(
+                    alias.name
+                )
         elif isinstance(node, ast.ImportFrom):
             for alias in node.names:
-                modules[alias.asname or alias.name] = importlib.import_module(f"{node.module}.{alias.name}")
+                modules[alias.asname or alias.name] = importlib.import_module(
+                    f"{node.module}.{alias.name}"
+                )
     return modules

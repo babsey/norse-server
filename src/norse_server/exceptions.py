@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # exceptions.py
 
-import traceback
-import sys
+import traceback # noqa
+import sys # noqa
 
 from .logger import logger
 
@@ -57,8 +57,9 @@ def call_or_error(func):
 
     return func_wrapper
 
+
 def get_lineno(err, tb_idx):
-    logger.debug("get lineno", err, tb_idx)
+    logger.error("get lineno", err, tb_idx)
 
     lineno = -1
     if hasattr(err, "lineno") and err.lineno is not None:

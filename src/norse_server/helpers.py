@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # helpers.py
 
-import time
+import time # noqa
 
-import torch
-import numpy as np
-import RestrictedPython
+import torch # noqa
+import numpy as np # noqa
+import RestrictedPython # noqa
 
 from .utils import Capturing, clean_code, get_boolean_environ, get_modules_from_env
 from .exceptions import call_or_error
