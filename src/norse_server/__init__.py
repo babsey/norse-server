@@ -1,4 +1,4 @@
-from importlib import metadata as _metadata # noqa
+from importlib import metadata # noqa
 
-__version__ = _metadata.version("norse-server")
-del _metadata
+__version__ = metadata.version("norse-server")
+del metadata
