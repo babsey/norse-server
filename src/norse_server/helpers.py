@@ -42,9 +42,7 @@ def do_exec(request):
 
     if request.response_keys:
         if isinstance(request.response_keys, list):
-            data = dict()
-            for key in request.response_keys:
-                data[key] = locals_.get(key, None)
+            data = dict([(key, locals_.get(key, None)) for key in request.response_keys])
         else:
             data = locals_.get(request.response_keys, None)
         response["data"] = serialize_data(data)
