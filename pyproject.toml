@@ -1,7 +1,7 @@
 [project]
 name = "norse-server"
-version = "1.0.1"
-description = "Server for executing arbitrary PyTorch and Norse code"
+version = "1.1.0"
+description = "Server instance for executing arbitrary PyTorch and Norse code"
 readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "BSD-3-Clause"}
@@ -13,19 +13,20 @@ authors = [
 maintainers = [
   {name = "Sebastian Spreizer", email = "spreizer@web.de"},
 ]
-keywords = ["Python", "PyTorch", "Norse", "Flask"]
+keywords = ["Norse", "PyTorch", "spiking neuronal networks"]
 classifiers = [
-  "Framework :: Flask",
+  "Development Status :: 5 - Production/Stable",
+  "Framework :: FastAPI",
+  "Intended Audience :: Science/Research",
   "Programming Language :: Python :: 3",
 ]
 dependencies = [
   "RestrictedPython",
-  "flask",
-  "flask-cors",
+  "fastAPI",
   "gunicorn",
   "norse",
-  "requests",
-  "werkzeug,
+  "pydantic",
+  "uvicorn",
 ]
 
 [project.urls]
@@ -33,7 +34,10 @@ repository = "https://github.com/norse/norse-server"
 documentation = "https://norse.github.io/norse/"
 
 [tool.setuptools]
-script-files = ["scripts/norse-server", "scripts/norse-server-win.bat"]
+script-files = [
+  "scripts/norse-server",
+  "scripts/norse-server-win.bat"
+]
 
 [tool.black]
 line-length = 120

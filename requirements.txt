@@ -1,7 +1,6 @@
 RestrictedPython
-flask
-flask-cors
+fastAPI
 gunicorn
 norse
-requests
-werkzeug
+pydantic
+uvicorn
