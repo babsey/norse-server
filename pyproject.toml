@@ -12,6 +12,7 @@ authors = [
 ]
 maintainers = [
   {name = "Sebastian Spreizer", email = "spreizer@web.de"},
+  {name = "Jens E. Pedersen", email = "jeped@kth.se"},
 ]
 keywords = ["Norse", "PyTorch", "spiking neuronal networks"]
 classifiers = [
