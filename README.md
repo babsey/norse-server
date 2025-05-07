@@ -1,18 +1,15 @@
-# Norse execution server
+# Norse server
 
-A server that executes arbitrary PyTorch and Norse code.
+A server instance that executes arbitrary PyTorch and Norse code.
 
 ## Usage
 
 ```bash
 # Install via pip
-pip install git+https://github.com/norse/norse_server
+pip install git+https://github.com/norse/norse-server
 
 # Run with gunicorn for production
 norse-server start
-
-# Or locally with flask for development
-flask --app src/main.py --debug run -h 0.0.0.0
 ```
 
 ## Acknowledgements
