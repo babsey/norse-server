@@ -65,4 +65,4 @@ def route_exec(data: Data):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="localhost", port=11428, log_config=f"norse-server-log.ini")
+    uvicorn.run(app, host="localhost", port=11428)
