@@ -1,10 +1,14 @@
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "norse-server"
 version = "1.1.0"
 description = "Server instance for executing arbitrary PyTorch and Norse code"
 readme = "README.md"
 requires-python = ">=3.9"
-license = {text = "BSD-3-Clause"}
+license-files = ["BSD-3-Clause"]
 authors = [
   {name = "Hilal Khalife"},
   {name = "Jens E. Pedersen"},
